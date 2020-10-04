@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css"/>
+    <link rel="stylesheet" href="./assets/css/style.css">
+
+    <title>Account</title>
+
+</head>
+<body>
+
+    <main>
+        <!-- Dark Mode Switch -->    
+          <div class="theme_switch_wrapper">
+              <span class="toggle_icon" id="toggle_icon">
+                  <span class="toggle_text">Light Mode</span>
+                  <i class="fas fa-sun"></i>
+              </span>
+          <label class="theme_switch">
+              <input type="checkbox" name="" id="checkbox_toggle">
+              <div class="slider round"></div>
+          </label>
+          </div>
+
+  </main>
+
+
+
+    <section>
+        <!-- Menu Overlay -->
+        <div class="overlay overlay-slide-up" id="overlay">
+            <!-- Menu Item -->
+            <nav>
+                <ul>
+                <li id="" class=""><a href="home.html">Home</a></li>
+                <li id="" class=""><a href="account.html">Account</a></li>
+                <li id="" class=""><a href="blog.html">Blog</a></li>
+                <li id="" class="logout"><a class="">Logout</a></li>
+                </ul>
+            </nav>
+
+        </div>
+        <!-- Menu Bars -->
+        <div class="menu-bars" id="menu-bars">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+    </section>
+
+
+    <section class="home">
+        <div class="hr_width">  <hr/></div>
+        <div class="body_container">
+          
+            <div class="container_blog">
+
+            </div>
+     
+        </div>
+    </section>
+
+
+    <script src="./assets/js/script.js"></script>
+    <script >
+    (function(){
+        let container_blog = document.querySelector('.container_blog')
+
+        if(localStorage.getItem('USER_ID') === null){
+
+        window.location.replace("index.html");
+
+    } else {
+        let account_ID = localStorage.getItem('USER_ID')
+        //get user
+        let USER_username = "";
+        let apiUrlUsers ='https://jsonplaceholder.typicode.com/users';
+
+        async function account(){
+
+            try {
+                const response = await fetch(apiUrlUsers);
+                const data = await response.json();
+                
+
+                data.map(element =>{
+                    if(Number(account_ID ) === Number(element.id)){
+                        USER_username = element.username;
+                    }
+
+                    
+                })
+                
+            } catch (error){
+                    console.log("Account ",error)
+            }
+        }
+
+        account();
+
+
+        let apiUrlUsersPosts ='https://jsonplaceholder.typicode.com/posts';
+
+        
+            async function blog(){
+
+                try {
+                    const response = await fetch(apiUrlUsersPosts);
+                    const data = await response.json();
+
+                    data.map(element =>{
+                        if(Number(account_ID) === Number(element.userId)){
+                        
+                        //div body 
+                        const div_body = document.createElement('div');
+                        div_body.classList.add('blog');
+
+                        //h2 title
+                        const h2_title = document.createElement('h2');
+                            h2_title.textContent = element.title;
+
+                        //Small Author
+                        const small_author = document.createElement('small');
+                        small_author.textContent = `Author: ${USER_username}`;
+
+
+                        //p body
+                        const p_body = document.createElement('p');
+                            p_body.textContent = element.body;
+
+                        //Append to blog container
+                        div_body.append(h2_title,small_author, p_body);
+                        container_blog.appendChild(div_body);
+
+                        }
+                    })
+                
+                } catch (error){
+                    console.log("blog ",error)
+                }
+            }
+            blog()
+
+
+    }
+
+    //logout
+    const logout = document.querySelector(".logout");
+    const logoutUser = () =>{
+        localStorage.removeItem('USER_ID')
+        window.location.replace("index.html");
+    }
+    logout.addEventListener('click', logoutUser)
+
+    //Event Listeners for toggle Nav
+        menuBars.addEventListener('click', toggleNav);
+    })()
+    </script>
+</body>
+</html>

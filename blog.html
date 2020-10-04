@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css"/>
+    <link rel="stylesheet" href="./assets/css/style.css">
+
+    <title>Account</title>
+
+</head>
+<body>
+
+    <main>
+        <!-- Dark Mode Switch -->    
+          <div class="theme_switch_wrapper">
+              <span class="toggle_icon" id="toggle_icon">
+                  <span class="toggle_text">Light Mode</span>
+                  <i class="fas fa-sun"></i>
+              </span>
+          <label class="theme_switch">
+              <input type="checkbox" name="" id="checkbox_toggle">
+              <div class="slider round"></div>
+          </label>
+          </div>
+
+  </main>
+
+
+
+    <section>
+        <!-- Menu Overlay -->
+        <div class="overlay overlay-slide-up" id="overlay">
+            <!-- Menu Item -->
+            <nav>
+                <ul>
+                <li id="" class=""><a href="home.html">Home</a></li>
+                <li id="" class=""><a href="account.html">Account</a></li>
+                <li id="" class=""><a href="blog.html">Blog</a></li>
+                <li id="" class="logout"><a class="">Logout</a></li>
+                </ul>
+            </nav>
+
+        </div>
+        <!-- Menu Bars -->
+        <div class="menu-bars" id="menu-bars">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+    </section>
+
+    <section class="blog_section">
+        <div class="create_blog">
+            <div  class="blog_container">
+                <div class="blog_container_add">
+                    <h1 class="add_blog"><i class="fas fa-plus"></i> Create Blog</h1>
+                  </div>
+                  <div class="for_hide hidden_" id="for_hide">
+                    <div  class="blog_container" >
+            
+                        <form action="">
+                            <!-- Blog Title -->
+                        <div class="">
+                            <h4 for="blog_title">Blog Title</h4>
+                            <input type="text" class="input_blog_title" name="blog_title" id="blog_title" placeholder="Blog Title"  required>
+                        </div>
+                    
+                        <!-- Blog Body -->
+                        <div class="">
+                            <h4 class="blog_body_content">Content</h4>
+                           <textarea class="blog_body" name="blog_body" id="blog_body" cols="30" rows="10" required></textarea>
+                        </div>
+                        <button type="submit" class="button_submit_blog" id="button_submit_blog">Create</button>   
+                        </form>
+                    </div>
+                  </div>
+            </div>
+
+        </div>
+       
+  </section>
+
+    <section>
+        <div class="hr_width">  <hr/></div>
+        <div class="body_container_blog">
+          
+          
+        </div>
+    </section>
+
+
+    <script src="./assets/js/script.js"></script>
+    <script>
+
+      (function(){
+        let container_blog = document.querySelector('.body_container_blog')
+
+        if(localStorage.getItem('USER_ID') === null){
+
+           window.location.replace("index.html");
+
+       } else {
+
+
+  let account_ID = localStorage.getItem('USER_ID')
+
+  //get user
+    let USER_username = "";
+    let apiUrlUsers ='https://jsonplaceholder.typicode.com/users';
+
+        async function account(){
+
+            try {
+                const response = await fetch(apiUrlUsers);
+                const data = await response.json();
+                
+
+                data.map(element =>{
+                    if(Number(account_ID ) === Number(element.id)){
+                        USER_username = element.username;
+                    }
+
+                    
+                })
+                
+            } catch (error){
+                    console.log("Account ",error)
+            }
+        }
+
+        account();
+        
+  let apiUrlUserCreateBlog ='https://jsonplaceholder.typicode.com/posts';
+  let title__blog = document.querySelector(".input_blog_title");
+  let blog__body = document.querySelector(".blog_body");
+  let button__submit_blog = document.querySelector(".button_submit_blog")
+
+
+
+    //function create blog
+
+    async function createBlog(e){
+        e.preventDefault()
+        
+        try {
+            let option ={
+                method: 'POST',
+                body: JSON.stringify({
+                    title: title__blog.value,
+                    body: blog__body.value,
+                    userId: account_ID,
+                }),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
+            }
+            const response = await fetch(apiUrlUserCreateBlog, option);
+            const data = await response.json();
+            if(data){
+                console.log(data)
+           //div body 
+           const div_body = document.createElement('div');
+            div_body.classList.add('blog');
+
+            //h2 title
+            const h2_title = document.createElement('h2');
+                h2_title.textContent = title__blog.value;
+
+            //Small Author
+            const small_author = document.createElement('small');
+            small_author.textContent = `Author: ${USER_username}`;
+
+
+            //p body
+            const p_body = document.createElement('p');
+                p_body.textContent = blog__body.value;
+
+            //Append to blog container
+            div_body.append(h2_title,small_author, p_body);
+            container_blog.appendChild(div_body);
+
+          title__blog.value =""
+          blog__body.value=""
+          addBlog()
+            }
+        } catch (error) {
+            console.log("create blog", error)
+        }
+    }
+
+    button__submit_blog.addEventListener('click', createBlog)
+    
+  }
+     //addblogForm
+     let add__blog = document.querySelector(".add_blog")
+     let for_hide = document.querySelector(".for_hide")
+     const addBlog =()=>{
+        for_hide.classList.toggle("hidden_")
+     }
+     add__blog.addEventListener('click', addBlog);
+       //logout
+       const logout = document.querySelector(".logout");
+       const logoutUser = () =>{
+        localStorage.removeItem('USER_ID')
+        window.location.replace("index.html");
+       }
+       logout.addEventListener('click', logoutUser)
+
+       //Event Listeners for toggle Nav
+        menuBars.addEventListener('click', toggleNav);
+      })()
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css"/>
+    <link rel="stylesheet" href="../assets/css/style.css">
+  
+    <title>Account</title>
+
+</head>
+<body>
+
+    <main>
+        <!-- Dark Mode Switch -->    
+          <div class="theme_switch_wrapper">
+              <span class="toggle_icon" id="toggle_icon">
+                  <span class="toggle_text">Light Mode</span>
+                  <i class="fas fa-sun"></i>
+              </span>
+          <label class="theme_switch">
+              <input type="checkbox" name="" id="checkbox_toggle">
+              <div class="slider round"></div>
+          </label>
+          </div>
+
+  </main>
+
+    <section>
+        <!-- Menu Overlay -->
+        <div class="overlay overlay-slide-up" id="overlay">
+            <!-- Menu Item -->
+            <nav>
+                <ul>
+                <li id="" class=""><a href="home.html">Home</a></li>
+                <li id="" class=""><a href="account.html">Account</a></li>
+                <li id="" class=""><a href="blog.html">Blog</a></li>
+                <li id="" class="logout"><a class="">Logout</a></li>
+                </ul>
+            </nav>
+
+        </div>
+        <!-- Menu Bars -->
+        <div class="menu-bars" id="menu-bars">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+    </section>
+
+    <section>
+        <div class="body_container">
+            <div class="container_account">
+                <h1 class="h1_account_title">Account</h1>
+    
+                    <div class="account_container">
+                       <h3 class="account_title">Email: <span class="account_title_ account_email"> </span> </h3>
+                       <h3 class="account_title">Username: <span class="account_title_ account_username"> </span></h3>
+                       <h3 class="account_title">Name: <span class="account_title_ account_name"> </span></h3>
+                       <h3 class="account_title">Phone: <span class="account_title_ account_phone"> </span></h3>
+                    </div>
+            </div>
+        </div>
+    </section>
+
+    
+    <script src="./assets/js/script.js"></script>
+    <script src="./assets/js/helpers.js"></script>
+    <script >
+        (function(){
+
+
+        if(localStorage.getItem('USER_ID') === null){
+
+        window.location.replace("index.html");
+
+        } else {
+
+        let USER_email = "";
+        let USER_name = "";
+        let USER_phone = "";
+        let USER_username = "";
+        let apiUrlUsers ='https://jsonplaceholder.typicode.com/users';
+        let account_ID = localStorage.getItem('USER_ID')
+
+            async function account(){
+
+                try {
+                    const response = await fetch(apiUrlUsers);
+                    const data = await response.json();
+                    
+
+                    data.map(element =>{
+                        if(Number(account_ID ) === Number(element.id)){
+                            USER_email = element.email;
+                            USER_name = element.name;
+                            USER_phone = element.phone;
+                            USER_username = element.username;
+                        }
+
+                        
+                    })
+                    //showing fetch user to account page
+                    const account__email =  document.querySelector(".account_email").textContent = USER_email;
+                    const account__username =  document.querySelector(".account_username").textContent = USER_username;
+                    const account__name =  document.querySelector(".account_name").textContent = USER_name;
+                    const account__phone =  document.querySelector(".account_phone").textContent = USER_phone;
+                    
+                } catch (error){
+                    console.log("Account ",error)
+                }
+            }
+            account()
+        }
+        //logout
+        const logout = document.querySelector(".logout");
+        const logoutUser = () =>{
+        localStorage.removeItem('USER_ID')
+        window.location.replace("index.html");
+        }
+        logout.addEventListener('click', logoutUser)
+
+        //Event Listeners for toggle Nav
+        menuBars.addEventListener('click', toggleNav);
+        })()
+
+
+    </script>
+</body>
+</html>
